@@ -1,7 +1,8 @@
 const puppeteer = require('puppeteer');
 const listUrl = 'https://www.80s.tw/movie/list/';
 const movieDetails = [];
-(async () => {
+
+async function getMovieDetailUrl(listUrl){
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(listUrl,{
@@ -15,6 +16,14 @@ const movieDetails = [];
     return movieDetail;
   });
   movieDetails.push(...movieDetail);
-  
+  process.send({
+    movieDetails
+  });
   await browser.close();
-})();
+}
+getMovieDetailUrl(listUrl);
+
+
+process.on('message',(listUrl)=>{
+  getMovieDetailUrl(listUrl);
+});

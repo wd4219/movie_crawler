@@ -1,14 +1,12 @@
 const puppeteer = require('puppeteer');
-const detailList = 'https://www.80s.tw/movie/22815';
 const doubanMovieBase = 'https://api.douban.com/v2/movie/'
 const rq = require('request-promise-native');
 const mongoose = require('mongoose');
-
-
-(async () => {
+const Movie = mongoose.model('Movie');
+process.on('message',async (detailUrl)=>{
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    await page.goto(detailList, {
+    await page.goto(detailUrl, {
         waitUntil: 'networkidle2'
     });
     let movieDetail = await page.evaluate(() => {
@@ -19,5 +17,5 @@ const mongoose = require('mongoose');
     });
     await browser.close();
     let movie = await rq(doubanMovieBase+'subject/'+movieDetail.doubanId);
-    
-})();
+    console.log(await Movie.find({}));
+});

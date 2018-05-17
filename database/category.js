@@ -1,15 +1,17 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
-const Mixed = Schema.Mixed;
+const ObjectId = Schema.Types.ObjectId;
 
 const CategorySchema = new Schema({
     id: ObjectId,
-    name: String,
+    name: {
+        type: String,
+        unique: true
+    },
     meta: {
         createdAt: {
             type: Date,
-            default: Date.now() 
+            default: Date.now()
         },
         updatedAt: {
             type: Date,
@@ -18,12 +20,12 @@ const CategorySchema = new Schema({
     }
 });
 
-Category.pre('save',function (){
-    if(this.isNew){
+CategorySchema.pre('save', function () {
+    if (this.isNew) {
         this.meta.createdAt = this.meta.updatedAt = Date.now();
-    }else{
+    } else {
         this.meta.updatedAt = Date.now();
     }
 });
 
-mongoose.model('Category',CategorySchema)
+mongoose.model('Category', CategorySchema)

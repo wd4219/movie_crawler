@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
-const Mixed = Schema.Mixed;
+const ObjectId = Schema.Types.ObjectId;
+const Mixed = Schema.Types.Mixed;
 
 const MovieSchema = new Schema({
     id: ObjectId,
