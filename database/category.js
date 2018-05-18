@@ -28,4 +28,4 @@ CategorySchema.pre('save', function () {
     }
 });
 
-mongoose.model('Category', CategorySchema)
+mongoose.model('Category', CategorySchema);
