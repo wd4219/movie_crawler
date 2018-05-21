@@ -1,9 +1,6 @@
 const puppeteer = require('puppeteer');
 const doubanMovieBase = 'https://api.douban.com/v2/movie/'
 const rq = require('request-promise-native');
-const mongoose = require('mongoose');
-// const Movie = mongoose.model('Movie');
-
 process.on('message', async (detailUrl) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -35,13 +32,13 @@ process.on('message', async (detailUrl) => {
                 });
             }
         });
-        
+
 
         let downloadUrl = [];
-        $('.dlbutton1 a').each(function(){
+        $('.dlbutton1 a').each(function () {
             downloadUrl.push({
-                url:$(this).attr('href'),
-                title:$(this).attr('thunderrestitle')
+                url: $(this).attr('href'),
+                title: $(this).attr('thunderrestitle')
             });
         });
 
@@ -56,27 +53,13 @@ process.on('message', async (detailUrl) => {
         };
     });
     await browser.close();
-    let doubanMovie = JSON.parse(await rq(doubanMovieBase + 'subject/' + movieDetail.doubanId));
-    // let movie = await Movie.findOne({doubanId:movieDetail.doubanId}).exec();
-    // if(!movie){
-    console.log(doubanMovie);
     let data = {
         doubanId: movieDetail.doubanId,
-        name: doubanMovie.title,
-        original_name: doubanMovie.original_title,
-        aka: doubanMovie.aka,
-        rating: doubanMovie.rating && doubanMovie.rating.average,
-        images: doubanMovie.images,
-        year: doubanMovie.year,
         release_date: movieDetail.release_date,
         duration: movieDetail.duration,
-        download_url:movieDetail.downloadUrl,
-        language:movieDetail.language,
-        summary: doubanMovie.summary,
-        type:doubanMovie.subtype,
-        genres:doubanMovie.genres,
-        countries:doubanMovie.countries,
-    }
-    console.log(data);
-    // }
+        download_url: movieDetail.downloadUrl,
+        countries: movieDetail.countries,
+        language: movieDetail.language,
+    };
+    process.send(data);
 });

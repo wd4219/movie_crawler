@@ -62,4 +62,5 @@ MovieSchema.pre('save', function (next) {
     }
     next();
 });
+
 mongoose.model('Movie', MovieSchema);
