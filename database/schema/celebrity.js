@@ -19,7 +19,7 @@ const CelebritySchema = new Schema({
         type:Array,
         default:[]
     }, //更多英文名
-    avatar: Mixed, //头像
+    avatar: String, //头像
     summary:{
         type:String,
         default:''

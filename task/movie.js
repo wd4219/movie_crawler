@@ -3,10 +3,10 @@ const { resolve, join } = require('path');
 const mongoose = require('mongoose');
 const {connect} = require('../database/init');
 const glob = require('glob');
+const puppeteer = require('puppeteer');
 glob.sync(join(__dirname, '../database/schema', '**/*.js')).forEach(require);
 const doubanMovieBase = 'https://api.douban.com/v2/movie/'
 const rq = require('request-promise-native');
-const {getCelebrity} = require('./api');
 async function fetchData(url){
   let res = await rq(url);
   try {
@@ -58,33 +58,21 @@ async function fetchData(url){
     data.name = doubanMovie.title;
     data.original_name = doubanMovie.original_title;
     data.aka = doubanMovie.aka;
-    data.rating = doubanMovie.rating && doubanMovie.rating.average
+    data.rating = doubanMovie.rating && doubanMovie.rating.average;
     doubanMovie.casts.forEach(async(item)=>{
       let celebrity = await Celebrity.findOne({doubanId:item.id}).exec();
       if(!celebrity){
-        doubanCelebrity = await fetchData(doubanMovieBase + 'celebrity/' + item.id);
-        // let celebrityData = await getCelebrity(item.id);
         let data = {};
         data.doubanId = item.id;
-        data.name = doubanCelebrity.name;
-        data.name_en = doubanCelebrity.name_en;
-        data.aka_name = doubanCelebrity.aka;
-        data.aka_name_en = doubanCelebrity.aka_en;
-        // data.summary = celebrityData.summary;
-        data.gender = doubanCelebrity.gender;
-        data.both_palce = doubanCelebrity.born_palce;
-        data.profession = doubanCelebrity.professions;
-        data.constellation = doubanCelebrity.constellation
-
         celebrity = new Celebrity(data);
         await celebrity.save();
       }
     });
-    // let movie = await Movie.findOne({doubanId:data.doubanId});
-    // if(!movie){
-    //   movie = new Movie(data);
-    //   await movie.save();
-    // }
+    let movie = await Movie.findOne({doubanId:data.doubanId});
+    if(!movie){
+      movie = new Movie(data);
+      await movie.save();
+    }
   });
 })();
 
